@@ -4,10 +4,14 @@ const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: '*',  // Allow requests from anywhere (for now)
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // ✅ API Key stored securely in Render
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // Secure API Key Storage
 
 // ✅ Test route to confirm server is running
 app.get('/', (req, res) => {
@@ -39,8 +43,8 @@ app.post('/chat', async (req, res) => {
     }
 });
 
-// ✅ Start server using correct port
-const PORT = 3000;  // Manually force the correct port
+// ✅ Force the correct port (3000)
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`✅ Server is now running correctly on port ${PORT}`);
 });
