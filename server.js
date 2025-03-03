@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
     res.send('✅ Chatbot backend is running!');
 });
 
-// ✅ Chatbot API route
+// ✅ FIXED: Chatbot API route (POST /chat)
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message || "No message received";
 
