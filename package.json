@@ -4,10 +4,11 @@
   "description": "AI Chatbot Backend",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.17.1",
-    "cors": "^2.8.5",
     "axios": "^1.3.2",
-    "dotenv": "^16.0.3"
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.17.1",
+    "openai": "^4.86.1"
   },
   "scripts": {
     "start": "node server.js"
