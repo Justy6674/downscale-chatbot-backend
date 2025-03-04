@@ -1,77 +1,32 @@
-import { useState, useEffect } from "react";
-import { createRoot } from "react-dom/client";
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const { Configuration, OpenAIApi } = require("openai");
+require("dotenv").config();
 
-function ChatbotUI() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 
-  const sendMessage = async (text) => {
-    if (!text.trim()) return;
-    setMessages([...messages, { text, sender: "user" }]);
-    setInput("");
+const openai = new OpenAIApi(
+  new Configuration({ apiKey: process.env.OPENAI_API_KEY })
+);
 
-    try {
-      const response = await fetch("https://downscale-chatbot-backend.onrender.com/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
-      });
-      const data = await response.json();
-      setMessages((prev) => [...prev, { text: data.reply, sender: "ai" }]);
-    } catch (error) {
-      setMessages((prev) => [...prev, { text: "Error: Unable to fetch response.", sender: "ai" }]);
-    }
-  };
+app.post("/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+    const response = await openai.createCompletion({
+      model: "gpt-4",
+      prompt: message,
+      max_tokens: 100,
+    });
 
-  return (
-    <>
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 bg-[#b68a71] text-white p-4 rounded-full shadow-lg text-lg hover:bg-[#a0745f] transition-all"
-        >
-          💬 Chat
-        </button>
-      )}
+    res.json({ reply: response.data.choices[0].text.trim() });
+  } catch (error) {
+    console.error("Error generating response:", error);
+    res.status(500).json({ reply: "Sorry, something went wrong." });
+  }
+});
 
-      {isOpen && (
-        <div className="fixed bottom-4 right-4 bg-[#f7f2d3] p-4 rounded-lg shadow-xl w-96 border border-[#b68a71] font-[OpenSans]">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-bold text-[#b68a71]">AI Coach</h2>
-            <button onClick={() => setIsOpen(false)} className="text-gray-600 text-xl">✖</button>
-          </div>
-          <div className="h-64 overflow-auto border-b pb-2">
-            {messages.map((msg, index) => (
-              <div key={index} className={`my-2 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
-                <span className={msg.sender === "user" ? "bg-[#b68a71] text-white p-2 rounded-lg" : "bg-gray-300 p-2 rounded-lg"}>
-                  {msg.text}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex mt-3">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your question..."
-              className="flex-grow border rounded-lg p-2 bg-white"
-            />
-            <button onClick={() => sendMessage(input)} className="ml-2 bg-[#b68a71] text-white px-4 py-2 rounded-lg hover:bg-[#a0745f] transition-all">
-              Send
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-function injectChatbot() {
-  const chatContainer = document.createElement("div");
-  chatContainer.id = "chatbot-container";
-  document.body.appendChild(chatContainer);
-  createRoot(chatContainer).render(<ChatbotUI />);
-}
-
-injectChatbot();
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
