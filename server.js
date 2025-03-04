@@ -1,15 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-require("dotenv").config(); // Loads environment variables
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Load OpenAI API Key securely from environment variables
+// Load OpenAI API Key
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+// Serve Chatbot UI
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Chatbot API Route
 app.post("/chat", async (req, res) => {
     try {
         const user_input = req.body.message;
