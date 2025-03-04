@@ -1,17 +1,17 @@
 {
-  "name": "downscale-chatbot",
+  "name": "downscale-chatbot-backend",
   "version": "1.0.0",
-  "description": "Chatbot backend for Downscale AI",
+  "description": "AI Chatbot Backend",
   "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "axios": "^1.3.2",
+    "dotenv": "^16.0.3"
+  },
   "scripts": {
     "start": "node server.js"
   },
-  "dependencies": {
-  "express": "^4.17.1",
-  "cors": "^2.8.5",
-  "axios": "^1.3.2",
-  "dotenv": "^16.0.3"
-}
   "engines": {
     "node": "18.x"
   }
