@@ -12,6 +12,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // This must be set in Render
 });
 
+// Default home route to confirm backend is running
+app.get("/", (req, res) => {
+    res.send("Downscale Chatbot Backend is Running!");
+});
+
+// Main chatbot route
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
