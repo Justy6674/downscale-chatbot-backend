@@ -8,9 +8,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const openai = new OpenAIApi(
-  new Configuration({ apiKey: process.env.OPENAI_API_KEY })
-);
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
 
 app.post("/chat", async (req, res) => {
   try {
